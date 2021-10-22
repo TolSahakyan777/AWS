@@ -64,6 +64,6 @@ jobs:
         
         
         - name: Print Happy message for CD
-          run : echo "HAPPY!!!"
+          run : echo "HAPPY NIGGAS!!!"
          
          
