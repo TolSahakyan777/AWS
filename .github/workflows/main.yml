@@ -37,3 +37,33 @@ jobs:
         - name: Print Happy message for CI s
           run : echo "CI pipeline part finished Successfully!"
           
+          
+  my_cd-part:
+      runs-on: ubuntu-latest
+      needs: [my_ci-part]
+      
+      steps:
+        - name: Configure my AWS crendentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id    : ${{ secrets.MY_AWS_ACCESS_KEY }}
+            aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_KEY }}
+            aws-region           : ${{ env.AWS_REGION_NAME }} 
+  
+        - name: Create New ElasticBeanstalk App
+          run : |
+            aws elasticbeanstalk create-application-version \
+            --application-name ${{ env.EB_APPLICATION_NAME }} \
+            --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}",S#KEY"${{ env.DEPLOY_PACKAGE_NAME }}" \
+            --version-label "Ver-${{ github.sha }}" \
+            --description "CommitSHA=${{ env.github.sha }}"
+            
+        - name: Deploy new ElasticBeanstalk App Version
+          run : aws elasticbeanstalk update-environment --environment-name $ {{ env.EB_ENVIROMENT_NAME }} --version-label "Ver-${{ github.sha }}"
+          
+        
+        
+        - name: Print Happy message for CD
+          run : echo "HAPPY!!!"
+         
+         
